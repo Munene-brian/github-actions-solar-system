@@ -1,0 +1,38 @@
+name: CI + CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Compile
+        run: echo Hello, world!
+
+  dev-deploy:
+    needs: docker
+    runs-on: ubuntu-latest
+    environment:
+      name: development
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: v1.28.1
+
+      - name: Set Kubernetes context
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+
+      - name: Check kubectl version
+        run: kubectl version -o yaml
