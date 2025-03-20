@@ -1,4 +1,3 @@
-
 name: CI/CD Pipeline
 
 on:
@@ -21,21 +20,36 @@ jobs:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/development')
     steps:
       - name: Checkout code
-        run: echo "Install dependencies" 
+        uses: actions/checkout@v3
+        
+      - name: Run tests
+        run: |
+          echo "Running tests..."
 
-  # Job 2: Deploy to Development (test environment)
+  # Job 2: Deploy to Development (Test environment)
   deploy-to-dev:
     runs-on: ubuntu-latest
     needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/development'
     steps:
-      - name: Checkout step two
-        run: echo "test two"
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-  # Job 4: Deploy to Production
+      - name: Deploy to Development environment
+        run: |
+          echo "Deploying to Development environment"
+
+  # Job 3: Deploy to Production (only after merge to main)
   deploy-to-prod:
     runs-on: ubuntu-latest
+    environment: production  
+    needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      - name: Checkout step two
-        run: echo "test prod"
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to Production environment
+        run: |
+          echo "Deploying to Production environment"
+
