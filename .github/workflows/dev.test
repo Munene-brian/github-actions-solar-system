@@ -10,12 +10,13 @@ on:
   pull_request:
     branches:
       - development
+      - feature/*
 
 jobs:
   # Job 1: Test Job
   test-development-stage:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/development')
+    if: github.event_name == 'push' && github.ref == 'refs/heads/development'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
