@@ -35,7 +35,7 @@ jobs:
   # Job 4: Deploy to Production
   deploy-to-prod:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.head_commit.message == 'Merge pull request'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Checkout step two
         run: echo "test prod"
