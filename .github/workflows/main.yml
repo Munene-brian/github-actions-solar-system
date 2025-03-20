@@ -1,1 +1,41 @@
 
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - development
+      - feature/*
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+      - development
+
+jobs:
+  # Job 1: Test Job
+  test:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/development')
+    steps:
+      - name: Checkout code
+        run: echo "Install dependencies" 
+
+  # Job 2: Deploy to Development (test environment)
+  deploy-to-dev:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/development'
+    steps:
+      - name: Checkout step two
+        run: echo "test two"
+
+  # Job 4: Deploy to Production
+  deploy-to-prod:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.head_commit.message == 'Merge pull request' && github.event.pusher.name == 'github-actions'
+    steps:
+      - name: Checkout step two
+        run: echo "test prod"
