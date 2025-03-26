@@ -1,38 +1,38 @@
-name: CI/CD Pipeline
+# name: CI/CD Pipeline
 
-on:
-  push:
-    branches:
-      - main
-    tags:
-      - 'v*'
-  pull_request:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
+#     tags:
+#       - 'v*'
+#   pull_request:
+#     branches:
+#       - main
 
-jobs:
-  # Job 1: Test Job
-  test-for-production:
-    runs-on: ubuntu-latest
-    environment: production  
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/main')
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+# jobs:
+#   # Job 1: Test Job
+#   test-for-production:
+#     runs-on: ubuntu-latest
+#     environment: production  
+#     if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/main')
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
         
-      - name: Run tests
-        run: |
-          echo "Running tests..."
-  deploy-to-prod:
-    runs-on: ubuntu-latest
-    environment: production  
-    needs: test-for-production
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+#       - name: Run tests
+#         run: |
+#           echo "Running tests..."
+#   deploy-to-prod:
+#     runs-on: ubuntu-latest
+#     environment: production  
+#     needs: test-for-production
+#     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
 
-      - name: Deploy to Production environment
-        run: |
-          echo "Deploying to Production environment"
+#       - name: Deploy to Production environment
+#         run: |
+#           echo "Deploying to Production environment"
 
