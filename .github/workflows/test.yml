@@ -12,6 +12,7 @@ on:
       - main
       - development
       - feature/*
+    types: [ closed ]
 
 jobs:
   # Job 1: Test Job
