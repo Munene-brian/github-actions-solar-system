@@ -1,43 +1,52 @@
 name: CI/CD Pipeline
 
 on:
+  # Trigger on push to 'main' branch (successful merge from development)
   push:
     branches:
-      - main 
-      - development
-      - feature/*
-    tags:
-      - 'v*'
+      - main
+
+  # Trigger on pull request closed on 'development' branch
   pull_request:
     branches:
-      - main
       - development
-      - feature/*
-    types: [ closed ]
+    types: [closed]
 
 jobs:
-  # Job 1: Test Job
+  # Job 1: Test Job (For pull request to 'development' branch)
   test-development-stage:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'development'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
         
       - name: Run tests
         run: |
-          echo "Running tests..."
+          echo "Running tests for development branch..." 
 
-  # Job 2: Deploy to Development (Test environment)
+  # Job 2: Deploy to Development (Test environment) - Dependent on successful test stage
   deploy-to-dev:
     runs-on: ubuntu-latest
-    needs: test-development-stage
-#    if: github.event_name == 'push' && github.ref == 'refs/heads/development'
-    if: github.event.pull_request.merged == true
+    needs: test-development-stage  # Ensure this job depends on the successful completion of 'test-development-stage'
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'development'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Deploy to Development environment
         run: |
-          echo "Deploying to Development environment"
+          echo "Deploying to Development environment..."
+
+  # Job 3: Deploy to Production (When a successful merge happens to the 'main' branch)
+  deploy-to-prod:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: deploy-to-dev  # This job depends on the successful completion of 'deploy-to-dev'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to Production environment
+        run: |
+          echo "Deploying to Production environment..."
