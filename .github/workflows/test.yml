@@ -4,14 +4,14 @@ on:
   push:
     branches:
       - main
-      - development
+      - test
       - feature/*
     tags:
       - 'v*'
   pull_request:
     branches:
       - main
-      - development
+      - test
       - feature/*
     types: [ closed ]
 
